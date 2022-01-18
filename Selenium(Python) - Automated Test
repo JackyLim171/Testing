@@ -1,0 +1,27 @@
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.common.exceptions import TimeoutException
+from time import sleep
+from selenium import webdriver
+
+driver = webdriver.Chrome('ChromeDriver.Exe')
+
+driver.get('https://google.com')
+wait = WebDriverWait(driver, 10)
+driver.maximize_window()
+driver.find_element_by_name('q').send_keys("SpaceX Wiki")
+driver.find_element_by_name('btnK').click()
+driver.find_element_by_partial_link_text('en.wiki').click()
+
+find_elem = None
+scroll_from = 0
+scroll_limit = 400
+while not find_elem:
+    sleep(2)
+    driver.execute_script("window.scrollTo(%d, %d);" %(scroll_from, scroll_from+scroll_limit))
+    scroll_from += scroll_limit
+    try:
+        find_elem = wait.until(EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'CEO')]")))
+    except TimeoutException:
+        pass
